@@ -54,8 +54,9 @@ export const BookList = {
           role="listitem"
         >
           <div class="book-content">
-            <h3 class="book-title" :title="book.title">{{ book.title }}</h3>
-            <p class="book-author" :title="book.author">by {{ book.author }}</p>
+            <h3 class="book-title" :title="book.name">{{ book.name }}</h3>
+            <p v-if="book.number" class="book-number">{{ book.number }}</p>
+            <p v-if="book.author" class="book-author" :title="book.author">by {{ book.author }}</p>
 
             <!-- Show borrower name for borrowed books -->
             <p v-if="type === 'borrowed' && book.borrowerName" class="borrower-name" :title="'Borrowed by: ' + book.borrowerName">
@@ -75,6 +76,7 @@ export const BookList = {
               @click="$emit('borrow', book)"
               class="btn btn-primary"
               :disabled="loading"
+              :aria-label="'Borrow ' + book.name"
             >
               Borrow
             </button>
@@ -85,6 +87,7 @@ export const BookList = {
               @click="$emit('return', book)"
               class="btn btn-secondary"
               :disabled="loading"
+              :aria-label="'Return ' + book.name"
             >
               Return
             </button>

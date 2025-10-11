@@ -34,7 +34,8 @@ const app = createApp({
       const result = await api.getAvailableBooks();
 
       if (result.success) {
-        this.books = result.data.books || [];
+        // API returns array directly
+        this.books = Array.isArray(result.data) ? result.data : [];
       } else {
         this.error = result.error || "Failed to load books";
       }

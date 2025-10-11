@@ -301,6 +301,13 @@ h2 {
   hyphens: auto;
 }
 
+.book-number {
+  color: var(--text-light);
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-family: monospace;
+}
+
 .book-author {
   color: var(--text-light);
   font-size: 0.875rem;

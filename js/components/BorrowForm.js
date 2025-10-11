@@ -62,8 +62,9 @@ export const BorrowForm = {
 
         <div class="modal-body">
           <div class="book-info">
-            <h3>{{ book.title }}</h3>
-            <p class="text-light">by {{ book.author }}</p>
+            <h3>{{ book.name }}</h3>
+            <p v-if="book.number" class="text-light">{{ book.number }}</p>
+            <p v-if="book.author" class="text-light">by {{ book.author }}</p>
           </div>
 
           <form @submit.prevent="validateAndSubmit">
