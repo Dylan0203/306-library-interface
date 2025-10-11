@@ -4,7 +4,7 @@
  */
 
 // TODO: Update this URL when backend is ready
-const API_BASE_URL = "https://api.example.com";
+const API_BASE_URL = "https://n8n.306.team/webhook";
 
 /**
  * Generic API request wrapper with error handling
@@ -109,7 +109,7 @@ export const api = {
    * Get list of available books
    * @returns {Promise<{success: boolean, data?: {books: Array}, error?: string}>}
    */
-  getAvailableBooks: () => apiRequest("/books/available"),
+  getAvailableBooks: () => apiRequest("/d1bbd9dc-8c55-474f-8488-97524e56d0e6"),
 
   /**
    * Borrow a book
