@@ -28,13 +28,13 @@ Frontend-only application with root-level structure:
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] **T001** Create project directory structure (root: /, css/, js/, js/components/, js/pages/)
-- [ ] **T002** [P] Create placeholder `index.html` with Vue 3 CDN link and basic HTML structure
-- [ ] **T003** [P] Create placeholder `borrowed.html` with Vue 3 CDN link and basic HTML structure
-- [ ] **T004** [P] Create `css/styles.css` with CSS reset, root variables, and mobile-first base styles
-- [ ] **T005** Create `.gitignore` file for common frontend artifacts
+- [x] **T001** Create project directory structure (root: /, css/, js/, js/components/, js/pages/)
+- [x] **T002** [P] Create placeholder `index.html` with Vue 3 CDN link and basic HTML structure
+- [x] **T003** [P] Create placeholder `borrowed.html` with Vue 3 CDN link and basic HTML structure
+- [x] **T004** [P] Create `css/styles.css` with CSS reset, root variables, and mobile-first base styles
+- [x] **T005** Create `.gitignore` file for common frontend artifacts
 
-**Checkpoint**: Basic project structure exists, pages can be opened in browser
+**Checkpoint**: ✅ Basic project structure exists, pages can be opened in browser
 
 ---
 
@@ -44,25 +44,25 @@ Frontend-only application with root-level structure:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] **T006** Create `js/api.js` with base API client structure:
+- [x] **T006** Create `js/api.js` with base API client structure:
   - API_BASE_URL constant (placeholder for backend URL)
   - `apiRequest(endpoint, options)` wrapper function with fetch + error handling
   - Return format: `{success: boolean, data?: any, error?: string}`
   - Export empty `api` object ready for endpoint functions
 
-- [ ] **T007** [P] Create `js/components/Navigation.js`:
+- [x] **T007** [P] Create `js/components/Navigation.js`:
   - Export Navigation component definition
   - Props: `current` (string - 'available' or 'borrowed')
   - Template: nav element with links to index.html and borrowed.html
   - Highlight current page based on `current` prop
   - Responsive styling (stack on mobile, inline on desktop)
 
-- [ ] **T008** [P] Add global CSS for navigation component in `css/styles.css`:
+- [x] **T008** [P] Add global CSS for navigation component in `css/styles.css`:
   - Nav bar styles (flexbox layout)
   - Link styles (normal and active states)
   - Mobile responsive (padding, font sizes)
 
-**Checkpoint**: Foundation ready - API client exists, navigation component created, user story implementation can begin
+**Checkpoint**: ✅ Foundation ready - API client exists, navigation component created, user story implementation can begin
 
 ---
 
@@ -78,12 +78,12 @@ Frontend-only application with root-level structure:
 
 ### Implementation for User Story 1
 
-- [ ] **T009** [P] [US1] Add `getAvailableBooks()` function to `js/api.js`:
+- [x] **T009** [P] [US1] Add `getAvailableBooks()` function to `js/api.js`:
   - Call `apiRequest('/books/available')`
   - Return `{success, data: {books: []}, error}`
   - Export in api object
 
-- [ ] **T010** [P] [US1] Create `js/components/BookList.js`:
+- [x] **T010** [P] [US1] Create `js/components/BookList.js`:
   - Export BookList component definition
   - Props: `books` (array), `type` (string: 'available' or 'borrowed'), `loading` (boolean), `error` (string | null)
   - Template: Display books in grid/list with title, author
@@ -93,7 +93,7 @@ Frontend-only application with root-level structure:
   - Emit events: 'borrow' (for available type), 'return' (for borrowed type)
   - Include action buttons based on type
 
-- [ ] **T011** [US1] Create `js/pages/available.js`:
+- [x] **T011** [US1] Create `js/pages/available.js`:
   - Import Vue's `createApp` from global Vue
   - Import Navigation component
   - Import BookList component
@@ -102,25 +102,25 @@ Frontend-only application with root-level structure:
   - Register Navigation and BookList components
   - Mount app to `#app`
 
-- [ ] **T012** [US1] Update `index.html`:
+- [x] **T012** [US1] Update `index.html`:
   - Add `<div id="app">` container with Vue template
   - Template: `<navigation current="available">`, `<h1>`, `<book-list>`
   - Include script module: `<script type="module" src="js/pages/available.js"></script>`
   - Ensure Vue CDN loads first
 
-- [ ] **T013** [P] [US1] Add CSS for BookList component in `css/styles.css`:
+- [x] **T013** [P] [US1] Add CSS for BookList component in `css/styles.css`:
   - Book list grid (1 column mobile, 2-3 columns tablet/desktop)
   - Book card styles (border, padding, hover effects)
   - Empty state message styles
   - Error message styles (red background, icon)
   - Loading spinner styles
 
-- [ ] **T014** [US1] Add error handling in available.js:
+- [x] **T014** [US1] Add error handling in available.js:
   - Handle API network failures
   - Display user-friendly error messages
   - Provide "Retry" button that reloads books
 
-**Checkpoint**: User Story 1 complete - available books page fully functional, independently testable
+**Checkpoint**: ✅ User Story 1 complete - available books page fully functional, independently testable
 
 ---
 
@@ -138,12 +138,12 @@ Frontend-only application with root-level structure:
 
 ### Implementation for User Story 2
 
-- [ ] **T015** [P] [US2] Add `borrowBook(bookId, borrowerName)` function to `js/api.js`:
+- [x] **T015** [P] [US2] Add `borrowBook(bookId, borrowerName)` function to `js/api.js`:
   - Call `apiRequest('/books/borrow', {method: 'POST', body: JSON.stringify({bookId, borrowerName})})`
   - Return `{success, data: {book}, error}`
   - Export in api object
 
-- [ ] **T016** [P] [US2] Create `js/components/BorrowForm.js`:
+- [x] **T016** [P] [US2] Create `js/components/BorrowForm.js`:
   - Export BorrowForm component definition
   - Props: `book` (object | null) - book being borrowed
   - Data: `borrowerName` (string), `loading` (boolean), `error` (string | null)
@@ -156,7 +156,7 @@ Frontend-only application with root-level structure:
   - Emit events: 'confirm', 'cancel'
   - Show modal only if book prop is not null
 
-- [ ] **T017** [US2] Update `js/pages/available.js`:
+- [x] **T017** [US2] Update `js/pages/available.js`:
   - Add data properties: `borrowerName: ''`, `selectedBook: null`, `borrowing: false`
   - Add method `showBorrowForm(book)`: set `selectedBook = book`
   - Add method `async handleBorrow({bookId, borrowerName})`:
@@ -169,17 +169,17 @@ Frontend-only application with root-level structure:
   - Register BorrowForm component
   - Update template: add `<borrow-form>` with props and event handlers
 
-- [ ] **T018** [US2] Update BookList component in `js/components/BookList.js`:
+- [x] **T018** [US2] Update BookList component in `js/components/BookList.js`:
   - Add "Borrow" button to each book card when `type="available"`
   - Button click emits 'borrow' event with book object
   - Disable button when loading
 
-- [ ] **T019** [US2] Update available.js template:
+- [x] **T019** [US2] Update available.js template:
   - Wire BookList 'borrow' event to `showBorrowForm` method
   - Wire BorrowForm 'confirm' event to `handleBorrow` method
   - Wire BorrowForm 'cancel' event to `cancelBorrow` method
 
-- [ ] **T020** [P] [US2] Add CSS for BorrowForm component in `css/styles.css`:
+- [x] **T020** [P] [US2] Add CSS for BorrowForm component in `css/styles.css`:
   - Modal overlay (fixed, centered, semi-transparent background)
   - Modal content box (white, centered, responsive width)
   - Form styles (input, labels, buttons)
@@ -187,21 +187,21 @@ Frontend-only application with root-level structure:
   - Submit/cancel button styles
   - Loading state (disabled buttons, spinner)
 
-- [ ] **T021** [P] [US2] Create `js/components/Toast.js`:
+- [x] **T021** [P] [US2] Create `js/components/Toast.js`:
   - Export Toast component definition
   - Props: `message` (string | null), `type` ('success' | 'error')
   - Template: Toast notification (appears top-right)
   - Auto-dismiss after 5 seconds
   - Emit 'close' event for manual dismiss
 
-- [ ] **T022** [US2] Update available.js to include Toast:
+- [x] **T022** [US2] Update available.js to include Toast:
   - Add data: `toastMessage: null`, `toastType: 'success'`
   - Add method `showToast(message, type)`: set toast data, auto-clear after 5s
   - Register Toast component
   - Update template: add `<toast>` with props
   - Use toast in success/error scenarios
 
-- [ ] **T023** [P] [US2] Add CSS for Toast component in `css/styles.css`:
+- [x] **T023** [P] [US2] Add CSS for Toast component in `css/styles.css`:
   - Toast container (fixed top-right, z-index high)
   - Success/error color variants
   - Slide-in animation
@@ -226,17 +226,17 @@ Frontend-only application with root-level structure:
 
 ### Implementation for User Story 3
 
-- [ ] **T024** [P] [US3] Add `getBorrowedBooks()` function to `js/api.js`:
+- [x] **T024** [P] [US3] Add `getBorrowedBooks()` function to `js/api.js`:
   - Call `apiRequest('/books/borrowed')`
   - Return `{success, data: {books: []}, error}`
   - Export in api object
 
-- [ ] **T025** [P] [US3] Add `returnBook(bookId)` function to `js/api.js`:
+- [x] **T025** [P] [US3] Add `returnBook(bookId)` function to `js/api.js`:
   - Call `apiRequest('/books/return', {method: 'POST', body: JSON.stringify({bookId})})`
   - Return `{success, data: {book}, error}`
   - Export in api object
 
-- [ ] **T026** [US3] Create `js/pages/borrowed.js`:
+- [x] **T026** [US3] Create `js/pages/borrowed.js`:
   - Import Vue's `createApp` from global Vue
   - Import Navigation, BookList, Toast components
   - Define app with data: `books: [], loading: true, error: null, toastMessage: null, toastType: 'success'`
@@ -250,24 +250,24 @@ Frontend-only application with root-level structure:
   - Register components: Navigation, BookList, Toast
   - Mount app to `#app`
 
-- [ ] **T027** [US3] Update `borrowed.html`:
+- [x] **T027** [US3] Update `borrowed.html`:
   - Add `<div id="app">` container with Vue template
   - Template: `<navigation current="borrowed">`, `<h1>Borrowed Books</h1>`, `<book-list type="borrowed">`, `<toast>`
   - Include script module: `<script type="module" src="js/pages/borrowed.js"></script>`
   - Ensure Vue CDN loads first
 
-- [ ] **T028** [US3] Update BookList component in `js/components/BookList.js`:
+- [x] **T028** [US3] Update BookList component in `js/components/BookList.js`:
   - Add "Return" button to each book card when `type="borrowed"`
   - Display borrower name prominently for borrowed books
   - Optionally display `borrowedAt` timestamp (format as relative time if present)
   - Button click emits 'return' event with book object
   - Disable button when loading
 
-- [ ] **T029** [US3] Wire up events in borrowed.js:
+- [x] **T029** [US3] Wire up events in borrowed.js:
   - BookList 'return' event → `handleReturn` method
   - Toast 'close' event → clear toast message
 
-- [ ] **T030** [P] [US3] Add CSS for borrowed books display in `css/styles.css`:
+- [x] **T030** [P] [US3] Add CSS for borrowed books display in `css/styles.css`:
   - Borrower name styles (prominent, different color)
   - Borrowed timestamp styles (smaller, gray)
   - Return button styles (distinct from borrow button)
@@ -281,32 +281,32 @@ Frontend-only application with root-level structure:
 
 **Purpose**: Improvements affecting multiple user stories and final touches
 
-- [ ] **T031** [P] Refine responsive design in `css/styles.css`:
+- [x] **T031** [P] Refine responsive design in `css/styles.css`:
   - Test on 320px (mobile), 768px (tablet), 1024px+ (desktop)
   - Adjust breakpoints if needed
   - Ensure text truncation works for long titles/authors/names
   - Add tooltips for truncated text (title attribute)
 
-- [ ] **T032** [P] Enhance error messages across both pages:
+- [x] **T032** [P] Enhance error messages across both pages:
   - Network errors: "Unable to connect to server. Please check your connection."
   - Server errors: "Server error occurred. Please try again later."
   - Specific API errors: Display backend error messages
   - Add "Retry" buttons for recoverable errors
 
-- [ ] **T033** [P] Add loading states and skeleton screens:
+- [x] **T033** [P] Add loading states and skeleton screens:
   - Skeleton loaders for book cards while fetching
   - Loading spinner for operations in progress
   - Disable action buttons during operations
   - Prevent double-click submissions
 
-- [ ] **T034** [P] Accessibility improvements:
+- [x] **T034** [P] Accessibility improvements:
   - Add ARIA labels to buttons and forms
   - Ensure keyboard navigation works (tab order, enter to submit)
   - Add focus styles for keyboard users
   - Semantic HTML elements (nav, main, article for books)
   - Alt text for any icons/images
 
-- [ ] **T035** Add GitHub Pages deployment configuration:
+- [x] **T035** Add GitHub Pages deployment configuration:
   - Verify all paths are relative (no absolute paths)
   - Test locally with simple HTTP server
   - Create README.md with:
@@ -315,26 +315,26 @@ Frontend-only application with root-level structure:
     - API configuration steps
     - Deployment instructions
 
-- [ ] **T036** [P] Browser compatibility testing:
+- [x] **T036** [P] Browser compatibility testing:
   - Test on Chrome (last 2 versions)
   - Test on Firefox (last 2 versions)
   - Test on Safari (last 2 versions)
   - Test on Edge (last 2 versions)
   - Document any compatibility issues
 
-- [ ] **T037** Performance optimization:
+- [x] **T037** Performance optimization:
   - Verify page load < 2 seconds (measure with Network throttling)
   - Check API response handling < 1 second
   - Minimize DOM manipulations (Vue handles this)
   - Add cache headers if serving from GitHub Pages
 
-- [ ] **T038** Code cleanup and documentation:
+- [x] **T038** Code cleanup and documentation:
   - Add JSDoc comments to all functions in api.js
   - Add comments explaining complex logic
   - Remove any console.log statements (or gate behind DEBUG flag)
   - Ensure consistent code style (naming conventions, indentation)
 
-- [ ] **T039** Create manual test plan in `tests/manual-test-plan.md`:
+- [x] **T039** Create manual test plan in `tests/manual-test-plan.md`:
   - Test scenarios for each user story
   - Edge case testing checklist
   - Error scenario testing
@@ -342,7 +342,7 @@ Frontend-only application with root-level structure:
   - Responsive design checklist
   - Acceptance criteria from spec.md
 
-- [ ] **T040** Final validation:
+- [x] **T040** Final validation:
   - All user stories work independently
   - Navigation between pages works smoothly
   - No console errors
