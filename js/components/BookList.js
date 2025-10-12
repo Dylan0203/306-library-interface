@@ -22,6 +22,10 @@ export const BookList = {
       type: String,
       default: null,
     },
+    showReturnButton: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["borrow", "return"],
   template: `
@@ -88,13 +92,13 @@ export const BookList = {
 
             <!-- Return button for borrowed books -->
             <button
-              v-if="type === 'borrowed'"
+              v-if="type === 'borrowed' && showReturnButton"
               @click="$emit('return', book)"
               class="btn btn-secondary"
               :disabled="loading"
               :aria-label="'Return ' + book.name"
             >
-              Return
+              歸還
             </button>
           </div>
         </article>

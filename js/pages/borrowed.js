@@ -13,7 +13,14 @@ const app = createApp({
       error: null,
       toastMessage: null,
       toastType: "success",
+      isKeeperMode: false,
     };
+  },
+
+  created() {
+    // 檢查 URL 查詢參數
+    const urlParams = new URLSearchParams(window.location.search);
+    this.isKeeperMode = urlParams.get("mode") === "keeper";
   },
 
   async mounted() {
@@ -143,6 +150,7 @@ const app = createApp({
           type="borrowed"
           :loading="loading"
           :error="error"
+          :showReturnButton="isKeeperMode"
           @return="handleReturn"
         />
       </main>
