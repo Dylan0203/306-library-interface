@@ -4,7 +4,7 @@
  */
 
 // TODO: Update this URL when backend is ready
-const API_BASE_URL = "https://n8n.306.team/webhook";
+const API_BASE_URL = "https://n8n.306.team/webhook/";
 
 /**
  * Generic API request wrapper with error handling
@@ -109,7 +109,7 @@ export const api = {
    * Get list of available books
    * @returns {Promise<{success: boolean, data?: {books: Array}, error?: string}>}
    */
-  getAvailableBooks: () => apiRequest("/d1bbd9dc-8c55-474f-8488-97524e56d0e6"),
+  getAvailableBooks: () => apiRequest("d1bbd9dc-8c55-474f-8488-97524e56d0e6"),
 
   /**
    * Borrow a book
@@ -118,7 +118,7 @@ export const api = {
    * @returns {Promise<{success: boolean, data?: {book: Object}, error?: string}>}
    */
   borrowBook: (bookId, borrowerName) =>
-    apiRequest("/books/borrow", {
+    apiRequest("588b65d3-2a64-4cc4-9fb5-3c6a87aab16c", {
       method: "POST",
       body: JSON.stringify({ bookId, borrowerName }),
     }),
@@ -127,16 +127,16 @@ export const api = {
    * Get list of borrowed books
    * @returns {Promise<{success: boolean, data?: {books: Array}, error?: string}>}
    */
-  getBorrowedBooks: () => apiRequest("/books/borrowed"),
+  getBorrowedBooks: () => apiRequest("32a5b78e-6712-4948-b5dc-4af5c092af18"),
 
   /**
    * Return a book
-   * @param {string} bookId - ID of book to return
+   * @param {string} recordId - ID of borrow record to return (book_borrow_records.id)
    * @returns {Promise<{success: boolean, data?: {book: Object}, error?: string}>}
    */
-  returnBook: (bookId) =>
-    apiRequest("/books/return", {
-      method: "POST",
-      body: JSON.stringify({ bookId }),
+  returnBook: (recordId) =>
+    apiRequest("be25902c-7f43-430a-b0de-1fd19dd4cfd7", {
+      method: "PATCH",
+      body: JSON.stringify({ recordId }),
     }),
 };

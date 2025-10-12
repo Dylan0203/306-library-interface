@@ -28,12 +28,59 @@ const app = createApp({
       const result = await api.getBorrowedBooks();
 
       if (result.success) {
-        this.books = result.data;
+        // API 回傳陣列格式，需要轉換欄位名稱
+        const data = Array.isArray(result.data) ? result.data : [result.data];
+        const books = data.map((record) => ({
+          recordId: record.record_id, // 借閱記錄 ID (用於歸還)
+          bookId: record.id, // 書籍 ID
+          name: record.name || "未知書名",
+          number: record.number || "",
+          author: record.author || "",
+          borrowerName: record.borrower_name,
+          borrowedAt: record.borrow_date,
+        }));
+        // 按照書籍編號排序 (A01-1 格式)
+        this.books = this.sortBooksByNumber(books);
       } else {
         this.error = result.error;
       }
 
       this.loading = false;
+    },
+
+    sortBooksByNumber(books) {
+      return books.sort((a, b) => {
+        // 先按借閱者姓名排序
+        const aName = a.borrowerName || "";
+        const bName = b.borrowerName || "";
+
+        if (aName !== bName) {
+          return aName.localeCompare(bName, "zh-TW");
+        }
+
+        // 姓名相同時，再按書籍編號排序
+        if (!a.number && !b.number) return 0;
+        if (!a.number) return 1;
+        if (!b.number) return -1;
+
+        // 分割編號 (例如 "A01-1" -> ["A01", "1"])
+        const aParts = a.number.split("-");
+        const bParts = b.number.split("-");
+
+        // 先比較第一部分 (A01)
+        const aPrefix = aParts[0] || "";
+        const bPrefix = bParts[0] || "";
+
+        if (aPrefix !== bPrefix) {
+          return aPrefix.localeCompare(bPrefix);
+        }
+
+        // 第一部分相同，比較第二部分的數字
+        const aNumber = parseInt(aParts[1]) || 0;
+        const bNumber = parseInt(bParts[1]) || 0;
+
+        return aNumber - bNumber;
+      });
     },
 
     async retryLoad() {
@@ -42,21 +89,22 @@ const app = createApp({
 
     async handleReturn(book) {
       const confirmed = confirm(
-        `Return book borrowed by ${book.borrowerName}?`,
+        `確定要歸還 ${book.borrowerName} 借閱的書籍嗎？`,
       );
 
       if (!confirmed) {
         return;
       }
 
-      const result = await api.returnBook(book.id);
+      // 使用借閱記錄 ID 來歸還書籍
+      const result = await api.returnBook(book.recordId);
 
       if (result.success) {
-        // Optimistically remove from list
-        this.books = this.books.filter((b) => b.id !== book.id);
-        this.showToast("Book returned successfully!", "success");
+        // Optimistically remove from list (用 recordId 來比對)
+        this.books = this.books.filter((b) => b.recordId !== book.recordId);
+        this.showToast("歸還成功！", "success");
       } else {
-        this.showToast(result.error, "error");
+        this.showToast(result.error || "歸還失敗，請稍後再試", "error");
       }
     },
 

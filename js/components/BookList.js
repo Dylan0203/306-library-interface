@@ -60,13 +60,18 @@ export const BookList = {
 
             <!-- Show borrower name for borrowed books -->
             <p v-if="type === 'borrowed' && book.borrowerName" class="borrower-name" :title="'Borrowed by: ' + book.borrowerName">
-              Borrowed by: <strong>{{ book.borrowerName }}</strong>
+              借閱者：<strong>{{ book.borrowerName }}</strong>
             </p>
 
-            <!-- Show borrowed date if available -->
-            <p v-if="type === 'borrowed' && book.borrowedAt" class="borrowed-date">
-              {{ formatDate(book.borrowedAt) }}
-            </p>
+            <!-- Show borrowed date and due date -->
+            <div v-if="type === 'borrowed' && book.borrowedAt" class="borrowed-info">
+              <p class="borrowed-date">
+                借閱日期：{{ formatDate(book.borrowedAt) }}
+              </p>
+              <p class="due-date" :class="{ overdue: isOverdue(book.borrowedAt) }">
+                應歸還：{{ formatDueDate(book.borrowedAt) }}
+              </p>
+            </div>
           </div>
 
           <div class="book-actions">
@@ -100,17 +105,46 @@ export const BookList = {
     formatDate(dateString) {
       try {
         const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) return "Today";
-        if (diffDays === 1) return "Yesterday";
-        if (diffDays < 7) return `${diffDays} days ago`;
-        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-        return date.toLocaleDateString();
+        return date.toLocaleDateString("zh-TW", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
       } catch (e) {
         return "";
+      }
+    },
+
+    formatDueDate(borrowDateString) {
+      try {
+        const borrowDate = new Date(borrowDateString);
+        // 加上 14 天
+        const dueDate = new Date(borrowDate);
+        dueDate.setDate(dueDate.getDate() + 14);
+
+        return dueDate.toLocaleDateString("zh-TW", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      } catch (e) {
+        return "";
+      }
+    },
+
+    isOverdue(borrowDateString) {
+      try {
+        const borrowDate = new Date(borrowDateString);
+        const dueDate = new Date(borrowDate);
+        dueDate.setDate(dueDate.getDate() + 14);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        dueDate.setHours(0, 0, 0, 0);
+
+        return today > dueDate;
+      } catch (e) {
+        return false;
       }
     },
   },

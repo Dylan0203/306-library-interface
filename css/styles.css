@@ -330,10 +330,28 @@ h2 {
   word-break: break-word;
 }
 
+.borrowed-info {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
 .borrowed-date {
   color: var(--text-light);
   font-size: 0.75rem;
-  margin-top: 0.25rem;
+  margin: 0.25rem 0;
+}
+
+.due-date {
+  color: var(--primary-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.due-date.overdue {
+  color: var(--error-color);
+  font-weight: 700;
 }
 
 .book-actions {

@@ -35,12 +35,41 @@ const app = createApp({
 
       if (result.success) {
         // API returns array directly
-        this.books = Array.isArray(result.data) ? result.data : [];
+        const books = Array.isArray(result.data) ? result.data : [];
+        // 按照書籍編號排序 (A01-1 格式)
+        this.books = this.sortBooksByNumber(books);
       } else {
         this.error = result.error || "Failed to load books";
       }
 
       this.loading = false;
+    },
+
+    sortBooksByNumber(books) {
+      return books.sort((a, b) => {
+        // 如果沒有 number 欄位，放到最後
+        if (!a.number && !b.number) return 0;
+        if (!a.number) return 1;
+        if (!b.number) return -1;
+
+        // 分割編號 (例如 "A01-1" -> ["A01", "1"])
+        const aParts = a.number.split("-");
+        const bParts = b.number.split("-");
+
+        // 先比較第一部分 (A01)
+        const aPrefix = aParts[0] || "";
+        const bPrefix = bParts[0] || "";
+
+        if (aPrefix !== bPrefix) {
+          return aPrefix.localeCompare(bPrefix);
+        }
+
+        // 第一部分相同，比較第二部分的數字
+        const aNumber = parseInt(aParts[1]) || 0;
+        const bNumber = parseInt(bParts[1]) || 0;
+
+        return aNumber - bNumber;
+      });
     },
     async retryLoad() {
       await this.loadBooks();
@@ -57,9 +86,9 @@ const app = createApp({
         // Optimistic update: remove book from list
         this.books = this.books.filter((b) => b.id !== bookId);
         this.selectedBook = null;
-        this.showToast("Book borrowed successfully!", "success");
+        this.showToast("借閱成功！", "success");
       } else {
-        this.showToast(result.error || "Failed to borrow book", "error");
+        this.showToast(result.error || "借閱失敗，請稍後再試", "error");
       }
 
       this.borrowing = false;
