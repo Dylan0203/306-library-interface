@@ -114,13 +114,20 @@ export const api = {
   /**
    * Borrow a book
    * @param {string} bookId - ID of book to borrow
-   * @param {string} borrowerName - Name/ID of borrower
+   * @param {Object} borrowData - Borrower information
+   * @param {string} borrowData.borrowerName - Name/ID of borrower
+   * @param {string|null} borrowData.googleEmail - Google account email
+   * @param {string|null} borrowData.googleId - Google account ID
    * @returns {Promise<{success: boolean, data?: {book: Object}, error?: string}>}
    */
-  borrowBook: (bookId, borrowerName) =>
+  borrowBook: (bookId, borrowData) =>
     apiRequest("588b65d3-2a64-4cc4-9fb5-3c6a87aab16c", {
       method: "POST",
-      body: JSON.stringify({ bookId, borrowerName }),
+      body: JSON.stringify({
+        bookId,
+        email: borrowData.email,
+        name: borrowData.name,
+      }),
     }),
 
   /**
@@ -139,4 +146,15 @@ export const api = {
       method: "PATCH",
       body: JSON.stringify({ recordId }),
     }),
+
+  findUserName: (email) =>
+    apiRequest(
+      "9b072858-ff44-4ad5-bf32-2880de7d71ee?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkeWxhbkBvZGQudGVhbSIsInZlcnNpb24iOiIyMDI1MTAxNTE1MjQwNSIsImlhdCI6MTc2MDUxMzA2NX0.kKNRlXpFLqRJxlW1Hpv_YgLMQEP6hDzYMbgqKXOBOVw",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+        }),
+      },
+    ),
 };

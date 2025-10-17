@@ -1,6 +1,7 @@
 /**
  * Available Books Page
  * Displays list of books available for borrowing
+ * Using Vue 3 Composition API
  */
 
 import { api } from "../api.js";
@@ -8,45 +9,30 @@ import { Navigation } from "../components/Navigation.js";
 import { BookList } from "../components/BookList.js";
 import { BorrowForm } from "../components/BorrowForm.js";
 import { Toast } from "../components/Toast.js";
+import {
+  initGoogleAuth,
+  signInWithGoogle,
+  getCurrentUser,
+  isLoggedIn,
+} from "../auth.js";
 
-const { createApp } = Vue;
+const { createApp, ref, onMounted } = Vue;
 
 const app = createApp({
-  data() {
-    return {
-      books: [],
-      loading: true,
-      error: null,
-      selectedBook: null,
-      borrowing: false,
-      toastMessage: null,
-      toastType: "success",
-    };
-  },
-  async mounted() {
-    await this.loadBooks();
-  },
-  methods: {
-    async loadBooks() {
-      this.loading = true;
-      this.error = null;
+  setup() {
+    // Reactive state
+    const books = ref([]);
+    const loading = ref(true);
+    const error = ref(null);
+    const selectedBook = ref(null);
+    const borrowing = ref(false);
+    const toastMessage = ref(null);
+    const toastType = ref("success");
+    const user = ref(null);
 
-      const result = await api.getAvailableBooks();
-
-      if (result.success) {
-        // API returns array directly
-        const books = Array.isArray(result.data) ? result.data : [];
-        // 按照書籍編號排序 (A01-1 格式)
-        this.books = this.sortBooksByNumber(books);
-      } else {
-        this.error = result.error || "Failed to load books";
-      }
-
-      this.loading = false;
-    },
-
-    sortBooksByNumber(books) {
-      return books.sort((a, b) => {
+    // Sort books by number (A01-1 format)
+    const sortBooksByNumber = (bookList) => {
+      return bookList.sort((a, b) => {
         // 如果沒有 number 欄位，放到最後
         if (!a.number && !b.number) return 0;
         if (!a.number) return 1;
@@ -70,39 +56,123 @@ const app = createApp({
 
         return aNumber - bNumber;
       });
-    },
-    async retryLoad() {
-      await this.loadBooks();
-    },
-    showBorrowForm(book) {
-      this.selectedBook = book;
-    },
-    async handleBorrow({ bookId, borrowerName }) {
-      this.borrowing = true;
+    };
 
-      const result = await api.borrowBook(bookId, borrowerName);
+    // Load books from API
+    const loadBooks = async () => {
+      loading.value = true;
+      error.value = null;
+
+      const result = await api.getAvailableBooks();
+
+      if (result.success) {
+        // API returns array directly
+        const bookList = Array.isArray(result.data) ? result.data : [];
+        // 按照書籍編號排序 (A01-1 格式)
+        books.value = sortBooksByNumber(bookList);
+      } else {
+        error.value = result.error || "Failed to load books";
+      }
+
+      loading.value = false;
+    };
+
+    // Retry loading books
+    const retryLoad = async () => {
+      await loadBooks();
+    };
+
+    // Show borrow form (with login check)
+    const showBorrowForm = async (book) => {
+      // Check if user is logged in
+      if (!isLoggedIn()) {
+        try {
+          // Trigger Google Sign-In
+          await signInWithGoogle();
+          // After successful login, show borrow form
+          user.value = getCurrentUser();
+          console.log("user", user);
+          selectedBook.value = book;
+        } catch (err) {
+          console.error("Login failed:", err);
+          showToast("請先登入 306 員工 Google 帳號才能借書", "error");
+        }
+      } else {
+        // Already logged in, show form directly
+        selectedBook.value = book;
+      }
+    };
+
+    // Handle borrow confirmation
+    const handleBorrow = async ({ bookId }) => {
+      borrowing.value = true;
+
+      // Get current user info to send to API
+      user.value = getCurrentUser();
+
+      const borrowData = {
+        name: user.value?.name || null,
+        email: user.value?.email || null,
+      };
+
+      const result = await api.borrowBook(bookId, borrowData);
 
       if (result.success) {
         // Optimistic update: remove book from list
-        this.books = this.books.filter((b) => b.id !== bookId);
-        this.selectedBook = null;
-        this.showToast("借閱成功！", "success");
+        books.value = books.value.filter((b) => b.id !== bookId);
+        selectedBook.value = null;
+        showToast("借閱成功！", "success");
       } else {
-        this.showToast(result.error || "借閱失敗，請稍後再試", "error");
+        showToast(result.error || "借閱失敗，請稍後再試", "error");
       }
 
-      this.borrowing = false;
-    },
-    cancelBorrow() {
-      this.selectedBook = null;
-    },
-    showToast(message, type = "success") {
-      this.toastMessage = message;
-      this.toastType = type;
-    },
-    closeToast() {
-      this.toastMessage = null;
-    },
+      borrowing.value = false;
+    };
+
+    // Cancel borrow
+    const cancelBorrow = () => {
+      selectedBook.value = null;
+    };
+
+    // Show toast notification
+    const showToast = (message, type = "success") => {
+      toastMessage.value = message;
+      toastType.value = type;
+    };
+
+    // Close toast
+    const closeToast = () => {
+      toastMessage.value = null;
+    };
+
+    // Lifecycle hook: on mounted
+    onMounted(async () => {
+      // Initialize Google Auth
+      try {
+        await initGoogleAuth();
+      } catch (err) {
+        console.error("Failed to initialize Google Auth:", err);
+      }
+
+      await loadBooks();
+    });
+
+    // Expose to template
+    return {
+      books,
+      loading,
+      error,
+      selectedBook,
+      borrowing,
+      toastMessage,
+      toastType,
+      retryLoad,
+      showBorrowForm,
+      handleBorrow,
+      cancelBorrow,
+      showToast,
+      closeToast,
+    };
   },
   template: `
     <div>

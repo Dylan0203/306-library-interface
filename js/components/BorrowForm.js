@@ -1,7 +1,7 @@
 /**
- * BorrowForm Component
  * Modal form for borrowing a book with borrower name/ID input
  */
+import { getCurrentUser } from "../auth.js";
 
 export const BorrowForm = {
   props: {
@@ -24,9 +24,14 @@ export const BorrowForm = {
   watch: {
     book(newBook) {
       if (newBook) {
-        // Reset form when book changes
-        this.borrowerName = "";
+        // Reset form and auto-fill with logged-in user's name
         this.error = null;
+        const user = getCurrentUser();
+        if (user) {
+          this.borrowerName = user.name || user.email;
+        } else {
+          this.borrowerName = "";
+        }
       }
     },
   },
@@ -37,7 +42,6 @@ export const BorrowForm = {
         this.error = "Please enter your name or ID";
         return;
       }
-
       // Emit confirm event with book ID and borrower name
       this.$emit("confirm", {
         bookId: this.book.id,
@@ -59,14 +63,12 @@ export const BorrowForm = {
             ×
           </button>
         </div>
-
         <div class="modal-body">
           <div class="book-info">
             <h3>{{ book.name }}</h3>
             <p v-if="book.number" class="text-light">{{ book.number }}</p>
             <p v-if="book.author" class="text-light">by {{ book.author }}</p>
           </div>
-
           <form @submit.prevent="validateAndSubmit">
             <div class="form-group">
               <label for="borrower-name">Your Name or ID</label>
@@ -77,11 +79,10 @@ export const BorrowForm = {
                 class="form-input"
                 placeholder="Enter your name or ID"
                 maxlength="100"
-                autofocus
+                readonly
               />
               <p v-if="error" class="form-error">{{ error }}</p>
             </div>
-
             <div class="form-actions">
               <button type="button" @click="cancel" class="btn btn-secondary" :disabled="loading">
                 Cancel
