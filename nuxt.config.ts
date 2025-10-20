@@ -4,7 +4,13 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   // Modules
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", "@nuxt/ui"],
+
+  // Color mode configuration (system preference by default)
+  colorMode: {
+    preference: "system",
+    fallback: "light",
+  },
 
   // Dev server configuration
   devServer: {
@@ -14,7 +20,7 @@ export default defineNuxtConfig({
   // SSG mode for static site generation
   ssr: true,
 
-  // Global CSS
+  // Global CSS (keeping existing styles for gradual migration)
   css: ["~/assets/css/main.css", "~/assets/css/checkbox.css"],
 
   // Runtime config for environment variables
