@@ -96,16 +96,16 @@
         :showQRButton="isKeeperMode"
         :showCheckbox="isPrintMode"
         :selectedBooks="selectedBookIds"
-        @borrow="showBorrowForm"
+        @borrow="handleBorrowClick"
         @show-qrcode="handleShowQRCode"
         @selection-change="handleSelectionChange"
       />
 
       <BorrowForm
-        :book="selectedBook"
+        ref="borrowFormRef"
         :loading="borrowing"
         @confirm="handleBorrow"
-        @cancel="cancelBorrow"
+        @cancel="closeBorrowForm"
       />
 
       <QRCodeModal :book="qrCodeBook" :show="showQRCode" @close="closeQRCode" />
@@ -117,6 +117,7 @@
 
 <script setup lang="ts">
 import { BTN_BASE, BTN_SECONDARY } from "~/constants/styles";
+import { useUserStore } from "~/stores/user";
 
 interface Book {
   id: string;
@@ -136,25 +137,28 @@ useHead({
   ],
 });
 
-const route = useRoute();
 const api = useApi();
-const { currentUser, initGoogleAuth, signInWithGoogle, isLoggedIn } = useAuth();
+const { currentUser, initGoogleAuth } = useAuth();
+const userStore = useUserStore();
 
 // Reactive state
 const books = ref<Book[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const selectedBook = ref<Book | null>(null);
 const borrowing = ref(false);
 const toastMessage = ref<string | null>(null);
 const toastType = ref<"success" | "error">("success");
 const showQRCode = ref(false);
 const qrCodeBook = ref<Book | null>(null);
-const isKeeperMode = ref(false);
 const isPrintMode = ref(false);
 const selectedBookIds = ref<string[]>([]);
+const borrowFormRef = ref<{ showForm: (book: Book) => Promise<void> } | null>(
+  null,
+);
 
 // Computed
+const isKeeperMode = computed(() => userStore.isKeeper);
+
 const allSelected = computed(() => {
   return (
     books.value.length > 0 &&
@@ -240,17 +244,9 @@ const printAll = () => {
 };
 
 // Borrow functions
-const showBorrowForm = async (book: Book) => {
-  if (!isLoggedIn.value) {
-    try {
-      await signInWithGoogle();
-      selectedBook.value = book;
-    } catch (err) {
-      console.error("Login failed:", err);
-      showToast("請先登入 306 員工 Google 帳號才能借書", "error");
-    }
-  } else {
-    selectedBook.value = book;
+const handleBorrowClick = async (book: Book) => {
+  if (borrowFormRef.value) {
+    await borrowFormRef.value.showForm(book);
   }
 };
 
@@ -266,7 +262,6 @@ const handleBorrow = async ({ bookId }: { bookId: string }) => {
 
   if (result.success) {
     books.value = books.value.filter((b) => b.id !== bookId);
-    selectedBook.value = null;
     showToast("借閱成功!", "success");
   } else {
     showToast(result.error || "借閱失敗,請稍後再試", "error");
@@ -275,8 +270,8 @@ const handleBorrow = async ({ bookId }: { bookId: string }) => {
   borrowing.value = false;
 };
 
-const cancelBorrow = () => {
-  selectedBook.value = null;
+const closeBorrowForm = () => {
+  // Form handles its own internal state now
 };
 
 // QR Code functions
@@ -300,15 +295,8 @@ const closeToast = () => {
   toastMessage.value = null;
 };
 
-// Check URL params for keeper mode
-const checkKeeperMode = () => {
-  isKeeperMode.value = route.query.mode === "keeper";
-};
-
 // Lifecycle
 onMounted(async () => {
-  checkKeeperMode();
-
   try {
     await initGoogleAuth();
   } catch (err) {

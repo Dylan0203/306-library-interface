@@ -27,7 +27,7 @@
         :class="getBookCardClasses(book.id)"
         role="listitem"
       >
-        <div class="flex justify-end mb-2">
+        <div class="flex justify-between mb-2">
           <!-- Checkbox for selection -->
           <label
             v-if="showCheckbox"

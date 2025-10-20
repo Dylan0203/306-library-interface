@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { BTN_BASE, BTN_SECONDARY } from "~/constants/styles";
+import { useUserStore } from "~/stores/user";
 
 interface Book {
   recordId?: string;
@@ -57,8 +58,8 @@ useHead({
   ],
 });
 
-const route = useRoute();
 const api = useApi();
+const userStore = useUserStore();
 
 const books = ref<Book[]>([]);
 const loading = ref(true);
@@ -66,9 +67,11 @@ const error = ref<string | null>(null);
 const returning = ref(false);
 const toastMessage = ref<string | null>(null);
 const toastType = ref<"success" | "error">("success");
-const isKeeperMode = ref(false);
 const showQRCode = ref(false);
 const qrCodeBook = ref<Book | null>(null);
+
+// Computed
+const isKeeperMode = computed(() => userStore.isKeeper);
 
 const sortBooks = (bookList: Book[]): Book[] => {
   return bookList.sort((a, b) => {
@@ -147,7 +150,6 @@ const closeToast = () => {
 };
 
 onMounted(async () => {
-  isKeeperMode.value = route.query.mode === "keeper";
   await loadBooks();
 });
 </script>
