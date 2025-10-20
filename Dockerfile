@@ -30,5 +30,7 @@ RUN bun install -g serve
 # Expose port 3000 (Kamal proxy will forward 80/443 to this)
 EXPOSE 3000
 
-# Serve static files on port 3000
-CMD ["serve", "public", "-l", "3000"]
+# Serve static files on port 3000 with SPA mode
+# -s: Single Page Application mode (rewrites all not-found requests to index.html)
+# -n: Disable automatic directory listing
+CMD ["serve", "public", "-l", "3000", "-s", "-n"]

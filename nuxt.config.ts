@@ -26,7 +26,12 @@ export default defineNuxtConfig({
   },
 
   // SSG mode for static site generation
-  ssr: true,
+  ssr: false, // Client-side rendering for SPA mode
+
+  // Nitro preset for static hosting
+  nitro: {
+    preset: "static",
+  },
 
   // Global CSS
   css: ["~/assets/css/main.css"],
