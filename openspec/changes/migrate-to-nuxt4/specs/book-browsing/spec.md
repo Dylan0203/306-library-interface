@@ -6,7 +6,7 @@
 The system SHALL display all available books at the root route (`/`).
 
 #### Scenario: Navigate to homepage
-- **WHEN** user visits `http://localhost:3000/`
+- **WHEN** user visits `http://localhost:1234/`
 - **THEN** available books page is displayed
 - **AND** page title is "Available Books - Library System"
 

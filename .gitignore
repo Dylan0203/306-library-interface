@@ -13,12 +13,17 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Dependencies (if any added later)
+# Dependencies
 node_modules/
 
-# Build outputs (not applicable for this project but good to have)
+# Nuxt build outputs
+.nuxt/
+.output/
 dist/
 build/
+
+# Bun
+bun.lockb
 
 # Environment variables
 .env

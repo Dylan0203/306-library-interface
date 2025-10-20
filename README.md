@@ -1,234 +1,214 @@
-# Library Book Borrowing System
+# 306 Library Interface
 
-A simple, responsive web interface for browsing and borrowing books from a library system.
+A modern book borrowing system interface built with Nuxt 4 and Bun.
+
+## Tech Stack
+
+- **Nuxt 4.1.3** - Full-stack Vue framework with SSG/SSR support
+- **Vue 3.5** - Progressive JavaScript framework
+- **TypeScript** - Type-safe development
+- **Bun 1.0+** - Fast JavaScript runtime and package manager
+- **Vanilla CSS** - Mobile-first responsive design
+- **n8n Webhooks** - Backend API integration
 
 ## Features
 
-- **Browse Available Books**: View all books available for borrowing
-- **Borrow Books**: Select a book and provide your name/ID to borrow it
-- **View Borrowed Books**: See all currently borrowed books with borrower information
-- **Return Books**: Return borrowed books with a simple click
-- **Responsive Design**: Works seamlessly on mobile, tablet, and desktop devices
-- **Real-time Updates**: UI updates instantly after transactions
+- 📚 Browse available books
+- 🔖 Borrow books with Google account integration
+- 📋 View borrowed books with due date tracking
+- 🔄 Return books (Keeper mode)
+- 📱 QR code generation for books
+- 🖨️ Print borrowed books list
+- ♿ Fully accessible (ARIA labels, keyboard navigation)
+- 📱 Responsive design (320px - 2560px)
 
-## Technology Stack
+## Setup
 
-- **Vue.js 3** (CDN-based, no build tools required)
-- **Vanilla JavaScript ES6+**
-- **CSS3** with mobile-first responsive design
-- **GitHub Pages** for hosting
+### Prerequisites
+
+- **Bun 1.0+** (包含 Node.js 相容層)
+
+Install Bun if not already installed:
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd 306-library-interface
+
+# Install dependencies
+bun install
+```
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+NUXT_PUBLIC_API_BASE_URL=https://n8n.306.team/webhook/
+```
+
+## Development
+
+```bash
+# Start development server
+bun run dev
+
+# Open http://localhost:1234
+```
+
+### Available Commands
+
+```bash
+bun run dev      # Start development server with HMR
+bun run build    # Build for production (SSG mode)
+bun run preview  # Preview production build locally
+bun run generate # Generate static site (alias for build)
+bun run postinstall # Prepare Nuxt types (runs automatically)
+```
 
 ## Project Structure
 
 ```
-├── index.html              # Available books page (entry point)
-├── borrowed.html           # Borrowed books page
-├── css/
-│   └── styles.css          # All application styles
-├── js/
-│   ├── api.js              # API client for backend communication
-│   ├── components/         # Reusable Vue components
-│   │   ├── BookList.js     # Book list display component
-│   │   ├── BorrowForm.js   # Borrow modal form
-│   │   ├── Navigation.js   # Page navigation
-│   │   └── Toast.js        # Toast notifications
-│   └── pages/              # Page-specific logic
-│       ├── available.js    # Available books page logic
-│       └── borrowed.js     # Borrowed books page logic
-└── tests/
-    └── manual-test-plan.md # Manual testing checklist
+/
+├── pages/              # File-based routing
+│   ├── index.vue       # Available books page (/)
+│   ├── borrowed.vue    # Borrowed books page (/borrowed)
+│   └── print.vue       # Print view (/print)
+├── components/         # Vue components (auto-imported)
+│   ├── Navigation.vue
+│   ├── BookList.vue
+│   ├── BorrowForm.vue
+│   ├── Toast.vue
+│   └── QRCodeModal.vue
+├── composables/        # Composables (auto-imported)
+│   ├── useApi.ts       # API client
+│   └── useAuth.ts      # Google authentication
+├── assets/css/         # Global styles
+│   ├── main.css
+│   └── checkbox.css
+├── public/             # Static assets
+├── nuxt.config.ts      # Nuxt configuration
+├── tsconfig.json       # TypeScript configuration
+└── .env                # Environment variables
 ```
 
-## Setup Instructions
+## Build & Deployment
 
-### Prerequisites
+### Build for Production
 
-- A modern web browser (Chrome, Firefox, Safari, or Edge - last 2 versions)
-- A simple HTTP server for local development (optional but recommended)
+```bash
+# Generate static site
+bun run build
 
-### Local Development
+# Output will be in .output/public/
+```
 
-1. **Clone the repository**:
+### Deploy to GitHub Pages
+
+1. Build the project:
    ```bash
-   git clone <repository-url>
-   cd 306-library-interface
+   bun run build
    ```
 
-2. **Configure API URL**:
-   - Open `js/api.js`
-   - Update the `API_BASE_URL` constant with your backend API URL:
-     ```javascript
-     const API_BASE_URL = "https://your-api-domain.com";
-     ```
+2. Deploy the `.output/public/` directory to your hosting service
 
-3. **Run a local server** (recommended):
-   
-   **Option 1: Python**
-   ```bash
-   # Python 3
-   python -m http.server 8000
-   
-   # Python 2
-   python -m SimpleHTTPServer 8000
-   ```
-   
-   **Option 2: Node.js (http-server)**
-   ```bash
-   npx http-server -p 8000
-   ```
-   
-   **Option 3: VS Code Live Server**
-   - Install the "Live Server" extension
-   - Right-click `index.html` and select "Open with Live Server"
+3. Ensure CORS is configured for the n8n webhook API
 
-4. **Open in browser**:
-   - Navigate to `http://localhost:8000`
-   - The available books page will load automatically
+### Deploy to Other Platforms
 
-### API Configuration
+The `.output/public/` directory contains a fully static site that can be deployed to:
+- GitHub Pages
+- Netlify
+- Vercel
+- Cloudflare Pages
+- Any static hosting service
 
-The application expects four backend API endpoints:
+## API Integration
 
-1. **GET `/books/available`** - Returns list of available books
-   ```json
-   {
-     "books": [
-       {
-         "id": "string",
-         "title": "string",
-         "author": "string"
-       }
-     ]
-   }
-   ```
+### Endpoints
 
-2. **POST `/books/borrow`** - Borrows a book
-   ```json
-   // Request
-   {
-     "bookId": "string",
-     "borrowerName": "string"
-   }
-   
-   // Response
-   {
-     "book": { "id": "string", "title": "string", "author": "string" }
-   }
-   ```
+The application uses n8n webhook endpoints:
 
-3. **GET `/books/borrowed`** - Returns list of borrowed books
-   ```json
-   {
-     "books": [
-       {
-         "id": "string",
-         "title": "string",
-         "author": "string",
-         "borrowerName": "string",
-         "borrowedAt": "ISO 8601 date string"
-       }
-     ]
-   }
-   ```
+- `getAvailableBooks` - GET available books list
+- `borrowBook` - POST borrow a book
+- `getBorrowedBooks` - GET borrowed books list
+- `returnBook` - PATCH return a book
+- `findUserName` - POST find user by email
 
-4. **POST `/books/return`** - Returns a book
-   ```json
-   // Request
-   {
-     "bookId": "string"
-   }
-   
-   // Response
-   {
-     "book": { "id": "string", "title": "string", "author": "string" }
-   }
-   ```
+### Data Format
 
-**Note**: The API must support CORS for the frontend to make requests.
+Books use the following schema:
+```typescript
+interface Book {
+  id: string
+  name: string        // Note: Uses 'name', not 'title'
+  number: string      // Call number (e.g., "A01-1")
+  author?: string     // Optional
+  borrowerName?: string
+  borrowedAt?: string
+}
+```
 
-## Deployment to GitHub Pages
+## Features
 
-1. **Prepare your repository**:
-   - Ensure all paths are relative (no absolute paths)
-   - Verify `API_BASE_URL` is configured correctly
+### Keeper Mode
 
-2. **Enable GitHub Pages**:
-   - Go to your repository settings
-   - Navigate to "Pages" section
-   - Under "Source", select the branch (usually `main` or `master`)
-   - Select root folder `/` as the source
-   - Click "Save"
+Add `?mode=keeper` to URL for additional features:
+- View QR codes for books
+- Return borrowed books
+- Print mode with book selection
 
-3. **Access your site**:
-   - GitHub Pages will provide a URL like: `https://username.github.io/repository-name/`
-   - The site will be live in a few minutes
+Examples:
+- Available books (keeper): `http://localhost:1234/?mode=keeper`
+- Borrowed books (keeper): `http://localhost:1234/borrowed?mode=keeper`
 
-4. **Custom Domain** (optional):
-   - In repository settings > Pages, add your custom domain
-   - Create a `CNAME` file in the root with your domain name
-   - Configure DNS records with your domain provider
+### Google Authentication
 
-## Browser Compatibility
+Books can only be borrowed by users logged in with 306 employee Google accounts.
+The Google Identity Services SDK is loaded automatically.
 
-Tested and supported on:
-- Chrome (last 2 versions)
-- Firefox (last 2 versions)
-- Safari (last 2 versions)
-- Edge (last 2 versions)
+## Testing
 
-Minimum viewport width: 320px (mobile devices)
-Maximum tested viewport: 2560px (large displays)
+Manual testing checklist available in `tests/manual-test-plan.md`
 
-## Performance
+### Test on Multiple Browsers
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
 
-- Page load: < 2 seconds
-- API response rendering: < 1 second
-- Optimistic UI updates for instant feedback
+### Test Responsive Design
+- Mobile: 320px - 767px
+- Tablet: 768px - 1023px
+- Desktop: 1024px+
 
 ## Accessibility
 
-- ARIA labels on interactive elements
+- ARIA labels on all interactive elements
 - Keyboard navigation support
-- Focus indicators for keyboard users
-- Semantic HTML structure
+- Focus indicators
 - Skip-to-content link
-- Responsive text sizing
-- Color contrast compliance
+- Semantic HTML structure
 
-## Manual Testing
+## TypeScript
 
-See `tests/manual-test-plan.md` for a comprehensive testing checklist.
+Type checking:
+```bash
+# Run type check
+npx nuxt typecheck
+```
 
-## Architecture Decisions
-
-- **No build tools**: Uses Vue 3 global build from CDN for simplicity
-- **ES6 Modules**: Browser-native module system
-- **Component-based**: Reusable Vue components for maintainability
-- **API abstraction**: Centralized API client with error handling
-- **Mobile-first CSS**: Base styles for small screens, enhanced for larger
-- **Optimistic updates**: UI updates immediately for better UX
-
-## Troubleshooting
-
-### CORS Errors
-If you see CORS errors in the browser console:
-- Ensure your backend API has CORS enabled
-- Check that the API URL is correct in `js/api.js`
-
-### Blank Page
-- Check browser console for errors
-- Verify Vue CDN is loading (check Network tab)
-- Ensure you're running a web server (not opening files directly)
-
-### API Not Responding
-- Verify the `API_BASE_URL` is correct
-- Check that the backend is running and accessible
-- Review network requests in browser DevTools
+TypeScript is configured with strict mode for better type safety.
 
 ## License
 
-[Your License Here]
+Proprietary - 306 Team
 
-## Contributing
+## Support
 
-[Contributing guidelines if applicable]
+For issues or questions, please contact the 306 development team.

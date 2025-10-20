@@ -26,28 +26,38 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 A book borrowing system interface built as a static single-page application. Users can browse available books, borrow books, view borrowed books, and return books through a responsive web interface.
 
 ## Active Technologies
-- **JavaScript ES6+** - Modern browser support (Chrome, Firefox, Safari, Edge - last 2 versions)
-- **Vue 3.x** - CDN-based (no build tools required)
+- **Nuxt 4.1.3** - Full-stack Vue framework with SSG/SSR support
+- **Vue 3.5** - Progressive JavaScript framework
+- **TypeScript** - Type-safe development
+- **Bun 1.0+** - Fast JavaScript runtime and package manager
 - **Vanilla CSS** - Mobile-first responsive design
 - **Backend API** - n8n webhook integration at `https://n8n.306.team/webhook`
 
 ## Project Structure
 ```
 /
-├── index.html              # Available books page (entry point)
-├── borrowed.html           # Borrowed books page
-├── css/
-│   └── styles.css          # All application styles
-├── js/
-│   ├── api.js              # API client (n8n webhook integration)
-│   ├── components/         # Vue components
-│   │   ├── BookList.js     # Book list display
-│   │   ├── BorrowForm.js   # Borrow modal form
-│   │   ├── Navigation.js   # Page navigation
-│   │   └── Toast.js        # Toast notifications
-│   └── pages/              # Page logic
-│       ├── available.js    # Available books page
-│       └── borrowed.js     # Borrowed books page
+├── pages/                  # File-based routing (Nuxt auto-routing)
+│   ├── index.vue           # Available books page (/)
+│   ├── borrowed.vue        # Borrowed books page (/borrowed)
+│   └── print.vue           # Print view (/print)
+├── components/             # Vue components (auto-imported)
+│   ├── Navigation.vue
+│   ├── BookList.vue
+│   ├── BorrowForm.vue
+│   ├── Toast.vue
+│   └── QRCodeModal.vue
+├── composables/            # Composables (auto-imported)
+│   ├── useApi.ts           # API client
+│   └── useAuth.ts          # Google authentication
+├── assets/css/             # Global styles
+│   ├── main.css
+│   └── checkbox.css
+├── public/                 # Static assets
+├── app.vue                 # Root component
+├── nuxt.config.ts          # Nuxt configuration
+├── tsconfig.json           # TypeScript configuration
+├── package.json            # Dependencies and scripts
+├── bun.lockb               # Bun lock file
 ├── tests/
 │   └── manual-test-plan.md # Manual testing checklist
 └── README.md               # Full documentation
@@ -75,31 +85,40 @@ A book borrowing system interface built as a static single-page application. Use
 
 ## Local Development
 
-### Start Local Server
-```bash
-# Python 3
-python3 -m http.server 8000
+### Prerequisites
+- Bun 1.0+ (install with: `curl -fsSL https://bun.sh/install | bash`)
 
-# Or Node.js
-npx http-server -p 8000 -c-1
+### Start Development Server
+```bash
+# Install dependencies (first time only)
+bun install
+
+# Start dev server with HMR
+bun run dev
+
+# Open http://localhost:1234
 ```
 
-Then open: http://localhost:8000
+### Other Commands
+```bash
+bun run build    # Build for production (SSG)
+bun run preview  # Preview production build
+```
 
 ## Code Style
 
-### JavaScript ES6+
-- Use ES6 modules (import/export)
-- Async/await for API calls
-- Arrow functions preferred
-- Const/let (no var)
-- Template literals for strings
+### TypeScript
+- Strict mode enabled
+- Interface-based type definitions
+- Proper type annotations for all functions
+- Use `ref<T>`, `computed<T>` with generics
 
-### Vue Components
-- Export as plain objects (no build tools)
-- Use composition API patterns where possible
-- Props with validation
-- Emit events for parent communication
+### Vue 3 Components
+- Use `<script setup lang="ts">` syntax
+- Composition API only
+- Props with `defineProps<T>()`
+- Emits with `defineEmits<T>()`
+- Auto-imports for components and composables
 
 ### CSS
 - Mobile-first responsive design
@@ -114,7 +133,7 @@ Current endpoint: `https://n8n.306.team/webhook/d1bbd9dc-8c55-474f-8488-97524e56
 ### Expected Endpoints
 1. **GET** `/getAvailableBooks` - Returns array of available books
 2. **POST** `/borrowBook` - Borrow a book
-3. **GET** `/getBorrowedBooks` - Returns array of borrowed books  
+3. **GET** `/getBorrowedBooks` - Returns array of borrowed books
 4. **POST** `/returnBook` - Return a book
 
 ## Features Implemented
@@ -143,12 +162,16 @@ Current endpoint: `https://n8n.306.team/webhook/d1bbd9dc-8c55-474f-8488-97524e56
 
 ### Development
 ```bash
-# Start local server
-python3 -m http.server 8000
-# or
-npx http-server -p 8000
+bun run dev      # Start dev server (http://localhost:1234)
+bun run build    # Build for production
+bun run preview  # Preview production build
+bun install      # Install/update dependencies
+bun add <pkg>    # Add new dependency
+```
 
-# No build process needed - direct file serving
+### TypeScript
+```bash
+npx nuxt typecheck  # Run type checking
 ```
 
 ### Testing
@@ -157,11 +180,20 @@ npx http-server -p 8000
 - Test responsive design at different viewports
 
 ### Deployment
-- Deploy to GitHub Pages (static file hosting)
+- Run `bun run build` to generate static site
+- Deploy `.output/public/` directory to hosting service
+- Compatible with: GitHub Pages, Netlify, Vercel, Cloudflare Pages
 - Ensure API CORS is configured correctly
-- All paths are relative (ready for deployment)
 
 ## Recent Changes
+- 2025-10-20: **Migrated to Nuxt 4 + Bun** - Complete architecture rewrite
+  - Moved from CDN Vue to Nuxt 4 framework
+  - Added TypeScript support with strict mode
+  - Converted all components to `.vue` SFC format
+  - Created composables for API and Auth
+  - Implemented file-based routing
+  - Added SSG build support
+  - Using Bun for package management
 - 2025-10-12: Updated to use `name` field instead of `title`
 - 2025-10-12: Added `number` (call number) display
 - 2025-10-12: Made `author` field optional
@@ -170,10 +202,13 @@ npx http-server -p 8000
 
 ## Notes
 - No automated tests (manual testing only per user request)
-- Vue 3 loaded from CDN (unpkg.com)
-- Browser-native ES6 modules (no bundler)
+- Nuxt 4 with Vite for fast HMR during development
+- TypeScript for type safety
+- Bun for ultra-fast package installation
+- Auto-imports for components and composables
 - Optimistic UI updates for better UX
 - All API errors handled gracefully
+- SSG mode for static deployment
 
 <!-- MANUAL ADDITIONS START -->
 

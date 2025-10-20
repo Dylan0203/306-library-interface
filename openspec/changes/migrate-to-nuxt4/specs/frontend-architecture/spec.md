@@ -8,7 +8,7 @@ The system SHALL use Nuxt 4 as the frontend framework with TypeScript support.
 #### Scenario: Development server startup
 - **WHEN** developer runs `npm run dev`
 - **THEN** Vite development server starts with hot module replacement
-- **AND** application is accessible at `http://localhost:3000`
+- **AND** application is accessible at `http://localhost:1234`
 
 #### Scenario: Production build generation
 - **WHEN** developer runs `npm run build`
