@@ -295,6 +295,20 @@ const closeToast = () => {
   toastMessage.value = null;
 };
 
+const route = useRoute();
+
+const borrowFromQueryString = () => {
+  const bookIdFromQuery = route.query.book_id;
+
+  if (!bookIdFromQuery) return;
+
+  const targetBook = books.value.find((book) => book.id === bookIdFromQuery);
+
+  if (!targetBook) return;
+
+  if (targetBook) handleBorrowClick(targetBook);
+};
+
 // Lifecycle
 onMounted(async () => {
   try {
@@ -304,5 +318,7 @@ onMounted(async () => {
   }
 
   await loadBooks();
+
+  borrowFromQueryString();
 });
 </script>
