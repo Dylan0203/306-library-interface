@@ -28,3 +28,6 @@ bun.lockb
 # Environment variables
 .env
 .env.local
+
+# Kamal secrets
+.kamal/secrets

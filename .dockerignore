@@ -1,0 +1,45 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output
+.output
+.nuxt
+dist
+
+# Development
+.git
+.github
+.vscode
+
+# Testing
+tests
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Documentation
+*.md
+!README.md
+
+# Configuration
+.env
+.env.*
+!.env.example
+
+# Kamal
+.kamal/secrets
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Temporary files
+tmp
+temp
+*.tmp
