@@ -28,6 +28,10 @@
 <script setup lang="ts">
 import QRCode from "qrcode";
 
+definePageMeta({
+  layout: "print",
+});
+
 interface Book {
   id: string;
   name: string;
