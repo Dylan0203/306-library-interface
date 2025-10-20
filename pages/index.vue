@@ -1,9 +1,17 @@
 <template>
   <div>
-    <main id="main-content" class="main-content">
-      <div class="page-header">
-        <h1>Available Books</h1>
-        <button v-if="error" @click="loadBooks" class="btn btn-secondary">
+    <main id="main-content" class="p-4 max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h1
+          class="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white"
+        >
+          Available Books
+        </h1>
+        <button
+          v-if="error"
+          @click="loadBooks"
+          :class="[BTN_BASE, BTN_SECONDARY]"
+        >
           Retry
         </button>
       </div>
@@ -11,50 +19,72 @@
       <!-- Print Controls (only in keeper mode) -->
       <div
         v-if="isKeeperMode && !loading && !error && books.length > 0"
-        class="print-controls"
+        class="flex gap-4 items-center mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg flex-wrap"
       >
-        <div class="print-controls-left">
+        <div
+          class="flex gap-4 items-center flex-1 max-sm:flex-col max-sm:items-stretch"
+        >
           <!-- Toggle Print Mode -->
           <button
             @click="togglePrintMode"
-            class="btn-mode-toggle"
-            :class="{ active: isPrintMode }"
+            :class="[
+              'px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
+              isPrintMode
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-blue-600',
+            ]"
           >
             {{ isPrintMode ? "✓ 列印模式" : "列印模式" }}
           </button>
 
           <!-- Select All (only in print mode) -->
-          <label v-if="isPrintMode" class="select-all-label">
+          <label
+            v-if="isPrintMode"
+            class="inline-flex items-center gap-2 cursor-pointer select-none font-medium text-gray-900 dark:text-white"
+          >
             <input
               type="checkbox"
-              class="select-all-checkbox"
+              class="peer absolute opacity-0 cursor-pointer h-0 w-0 focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
               :checked="allSelected"
               @change="toggleSelectAll"
             />
-            <span class="select-all-custom"></span>
+            <span
+              class="relative h-[22px] w-[22px] bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded transition-all duration-200 peer-hover:border-blue-600 peer-hover:bg-blue-50 dark:peer-hover:bg-gray-600 peer-checked:bg-blue-600 peer-checked:border-blue-600 after:content-[''] after:absolute after:hidden after:left-[7px] after:top-[3px] after:w-[5px] after:h-[10px] after:border-white after:border-r-2 after:border-b-2 after:rotate-45 peer-checked:after:block"
+            ></span>
             <span>全選</span>
           </label>
 
           <!-- Selection count -->
-          <div v-if="isPrintMode" class="selection-count">
-            已選擇 <strong>{{ selectionCount }}</strong> /
-            {{ books.length }} 本書
+          <div
+            v-if="isPrintMode"
+            class="text-gray-500 dark:text-gray-400 text-sm"
+          >
+            已選擇
+            <strong class="text-blue-600 dark:text-blue-400 font-semibold">{{
+              selectionCount
+            }}</strong>
+            / {{ books.length }} 本書
           </div>
         </div>
 
-        <div class="print-controls-right">
+        <div class="flex gap-2 max-sm:flex-col max-sm:w-full">
           <!-- Print Selected -->
           <button
             v-if="isPrintMode"
             @click="printSelected"
-            class="btn-print"
             :disabled="selectionCount === 0"
+            class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 border-0 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-blue-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 max-sm:w-full max-sm:justify-center"
           >
             🖨️ 列印已選 ({{ selectionCount }})
           </button>
 
           <!-- Print All -->
-          <button @click="printAll" class="btn-print">🖨️ 列印全部</button>
+          <button
+            @click="printAll"
+            class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 border-0 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 max-sm:w-full max-sm:justify-center"
+          >
+            🖨️ 列印全部
+          </button>
         </div>
       </div>
 
@@ -86,6 +116,8 @@
 </template>
 
 <script setup lang="ts">
+import { BTN_BASE, BTN_SECONDARY } from "~/constants/styles";
+
 interface Book {
   id: string;
   name: string;

@@ -5,7 +5,7 @@
 ## Task List
 
 ### Phase 1: Preparation
-- [ ] **T1.1** - Audit current CSS usage
+- [x] **T1.1** - Audit current CSS usage
   - Review all custom classes in `main.css`
   - Document which classes are used in which components
   - List all animations (`@keyframes`) to convert
@@ -13,14 +13,14 @@
   - **Validation**: Complete list of custom classes and their usage
   - **Estimated**: 30 min
 
-- [ ] **T1.2** - Create visual baseline
+- [x] **T1.2** - Create visual baseline
   - Take screenshots of all pages and component states (light + dark mode)
   - Document current responsive breakpoints behavior
   - Note all interactive states (hover, focus, active)
   - **Validation**: Screenshot set for regression testing
   - **Estimated**: 20 min
 
-- [ ] **T1.3** - Create shared style constants file
+- [x] **T1.3** - Create shared style constants file
   - Create `constants/styles.ts` for shared style patterns
   - Define initial constants for common patterns (cards, buttons, etc.)
   - Export constants with descriptive names
@@ -29,7 +29,7 @@
   - **Estimated**: 15 min
 
 ### Phase 2: Core Component Migration
-- [ ] **T2.1** - Migrate BookList.vue
+- [x] **T2.1** - Migrate BookList.vue
   - Replace `.book-grid`, `.book-card`, `.book-title` classes with utilities
   - Extract repeated card classes as TypeScript constants in component
   - Replace skeleton shimmer animation with Tailwind `animate-pulse` or custom
@@ -39,7 +39,7 @@
   - **Dependencies**: T1.2, T1.3
   - **Estimated**: 50 min
 
-- [ ] **T2.2** - Migrate BorrowForm.vue
+- [x] **T2.2** - Migrate BorrowForm.vue
   - Replace `.modal-overlay`, `.modal-content` classes with utilities
   - Migrate form input styles (`.form-group`, `.form-input`)
   - Convert button styles (`.btn`, `.btn-primary`, `.btn-secondary`) to constants
@@ -49,7 +49,7 @@
   - **Dependencies**: T1.2, T1.3
   - **Estimated**: 55 min
 
-- [ ] **T2.3** - Migrate QRCodeModal.vue
+- [x] **T2.3** - Migrate QRCodeModal.vue
   - Replace modal and QR code container classes with utilities
   - Reuse modal constants from BorrowForm if applicable
   - Ensure QR code display remains centered and properly sized
@@ -58,7 +58,7 @@
   - **Estimated**: 20 min
 
 ### Phase 3: Supporting Component Migration
-- [ ] **T3.1** - Migrate Toast.vue
+- [x] **T3.1** - Migrate Toast.vue
   - Replace `.toast`, `.toast-success`, `.toast-error` with utilities
   - Use Vue `<Transition>` with Tailwind classes for slideIn animation
   - Extract toast base classes as constants
@@ -67,7 +67,7 @@
   - **Dependencies**: T1.2, T1.3
   - **Estimated**: 20 min
 
-- [ ] **T3.2** - Review Navigation.vue
+- [x] **T3.2** - Review Navigation.vue
   - Verify Navigation already uses utility classes (it appears to be mostly migrated)
   - Migrate any remaining custom classes if present
   - Extract any repeated nav styles to constants
@@ -76,14 +76,14 @@
   - **Estimated**: 10 min
 
 ### Phase 4: Page-Level Styles
-- [ ] **T4.1** - Migrate page layout classes
+- [x] **T4.1** - Migrate page layout classes
   - Review and migrate `.main-content`, `.page-header` usage in pages
   - Check `index.vue`, `borrowed.vue`, `print.vue` (if exists)
   - **Validation**: Page layouts remain consistent
   - **Dependencies**: T2.1, T2.2 (components must be done first)
   - **Estimated**: 20 min
 
-- [ ] **T4.2** - Migrate utility and state classes
+- [x] **T4.2** - Migrate utility and state classes
   - Migrate `.empty-state`, `.error-message` classes
   - Migrate `.spinner` loading indicator
   - **Validation**: Loading and error states display correctly
@@ -91,7 +91,7 @@
   - **Estimated**: 15 min
 
 ### Phase 5: CSS and Global Styles Cleanup
-- [ ] **T5.1** - Completely clean main.css
+- [x] **T5.1** - Completely clean main.css
   - Remove entire `@layer components` section
   - Remove `@layer base` section (body, h1, h2)
   - Remove `@layer utilities` section
@@ -101,7 +101,7 @@
   - **Dependencies**: All T2.x, T3.x, T4.x tasks
   - **Estimated**: 10 min
 
-- [ ] **T5.2** - Configure global styles in Tailwind config or app.vue
+- [x] **T5.2** - Configure global styles in Tailwind config or app.vue
   - Move base typography (font-family, line-height) to Tailwind config or `app.vue`
   - Configure min-width for body if needed
   - Set up any global theme extensions
@@ -109,7 +109,7 @@
   - **Dependencies**: T5.1
   - **Estimated**: 15 min
 
-- [ ] **T5.3** - Review and optimize style constants
+- [x] **T5.3** - Review and optimize style constants
   - Check `constants/styles.ts` for any unused constants
   - Ensure naming is clear and consistent
   - Add JSDoc comments if needed
@@ -118,7 +118,7 @@
   - **Estimated**: 10 min
 
 ### Phase 6: Testing and Validation
-- [ ] **T6.1** - Visual regression testing
+- [x] **T6.1** - Visual regression testing
   - Compare all pages and states against baseline screenshots
   - Test responsive design at 320px, 768px, 1024px, 1920px
   - Verify dark mode consistency
@@ -126,7 +126,7 @@
   - **Dependencies**: All previous tasks
   - **Estimated**: 30 min
 
-- [ ] **T6.2** - Interaction testing
+- [x] **T6.2** - Interaction testing
   - Test borrow/return book flows
   - Test modal open/close
   - Test QR code display
@@ -136,7 +136,7 @@
   - **Dependencies**: T6.1
   - **Estimated**: 20 min
 
-- [ ] **T6.3** - Build and bundle size check
+- [x] **T6.3** - Build and bundle size check
   - Run `bun run build`
   - Compare bundle size before/after migration
   - Run TypeScript type check (`npx nuxt typecheck`)
@@ -145,7 +145,7 @@
   - **Dependencies**: T6.2
   - **Estimated**: 10 min
 
-- [ ] **T6.4** - Browser compatibility testing
+- [x] **T6.4** - Browser compatibility testing
   - Test on Chrome, Firefox, Safari, Edge
   - Verify responsive design and dark mode on each
   - **Validation**: Consistent behavior across browsers
@@ -153,7 +153,7 @@
   - **Estimated**: 20 min
 
 ### Phase 7: Documentation
-- [ ] **T7.1** - Update CLAUDE.md
+- [x] **T7.1** - Update CLAUDE.md
   - Update "Code Style" section to reflect Tailwind utility-first approach
   - Document TypeScript constants pattern for reusable styles
   - Note location of shared style constants (`constants/styles.ts`)

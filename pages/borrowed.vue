@@ -1,9 +1,17 @@
 <template>
   <div>
-    <main id="main-content" class="main-content">
-      <div class="page-header">
-        <h1>Borrowed Books</h1>
-        <button v-if="error" @click="loadBooks" class="btn btn-secondary">
+    <main id="main-content" class="p-4 max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h1
+          class="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white"
+        >
+          Borrowed Books
+        </h1>
+        <button
+          v-if="error"
+          @click="loadBooks"
+          :class="[BTN_BASE, BTN_SECONDARY]"
+        >
           Retry
         </button>
       </div>
@@ -27,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import { BTN_BASE, BTN_SECONDARY } from "~/constants/styles";
+
 interface Book {
   recordId?: string;
   id: string;

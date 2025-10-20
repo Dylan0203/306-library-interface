@@ -30,7 +30,8 @@ A book borrowing system interface built as a static single-page application. Use
 - **Vue 3.5** - Progressive JavaScript framework
 - **TypeScript** - Type-safe development
 - **Bun 1.0+** - Fast JavaScript runtime and package manager
-- **Vanilla CSS** - Mobile-first responsive design
+- **Tailwind CSS** - Utility-first CSS framework (directly in components)
+- **Nuxt UI** - UI component library with Tailwind integration
 - **Backend API** - n8n webhook integration at `https://n8n.306.team/webhook`
 
 ## Project Structure
@@ -49,8 +50,10 @@ A book borrowing system interface built as a static single-page application. Use
 ├── composables/            # Composables (auto-imported)
 │   ├── useApi.ts           # API client
 │   └── useAuth.ts          # Google authentication
+├── constants/              # Shared constants
+│   └── styles.ts           # Tailwind class combinations
 ├── assets/css/             # Global styles
-│   ├── main.css
+│   ├── main.css            # Only Tailwind import
 │   └── checkbox.css
 ├── public/                 # Static assets
 ├── app.vue                 # Root component
@@ -120,11 +123,14 @@ bun run preview  # Preview production build
 - Emits with `defineEmits<T>()`
 - Auto-imports for components and composables
 
-### CSS
-- Mobile-first responsive design
-- CSS custom properties for theming
-- BEM-like naming for clarity
-- Flexbox and Grid for layouts
+### CSS & Styling
+- **Tailwind utility-first approach**: Use Tailwind utility classes directly in component templates
+- **Shared style constants**: Reusable class combinations stored in `constants/styles.ts`
+- **Component-specific constants**: Extract repeated styles as TypeScript constants within components
+- **Mobile-first responsive design**: Use Tailwind's responsive prefixes (sm:, md:, lg:, xl:)
+- **Dark mode**: Use Tailwind's `dark:` variant for dark mode styles
+- **Animations**: Use Tailwind's animate utilities or Vue `<Transition>` components
+- **No custom CSS classes**: All styling done via utility classes or constants
 
 ## API Integration
 
@@ -186,6 +192,13 @@ npx nuxt typecheck  # Run type checking
 - Ensure API CORS is configured correctly
 
 ## Recent Changes
+- 2025-10-20: **Migrated to Tailwind utility classes** - Removed all custom CSS
+  - Removed all custom CSS classes from `main.css` (now only contains `@import "tailwindcss"`)
+  - Created `constants/styles.ts` with shared Tailwind class combinations
+  - Migrated all components to use Tailwind utilities directly
+  - Replaced `@keyframes` animations with Vue Transitions
+  - Moved global styles to `app.vue`
+  - Build size reduced, improved maintainability
 - 2025-10-20: **Migrated to Nuxt 4 + Bun** - Complete architecture rewrite
   - Moved from CDN Vue to Nuxt 4 framework
   - Added TypeScript support with strict mode
