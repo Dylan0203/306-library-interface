@@ -2,6 +2,7 @@
  * BookList Component
  * Displays a list of books with different actions based on type
  */
+
 export const BookList = {
   props: {
     books: {
@@ -29,8 +30,79 @@ export const BookList = {
       type: Boolean,
       default: false,
     },
+    showCheckbox: {
+      type: Boolean,
+      default: false,
+    },
+    selectedBooks: {
+      type: Array,
+      default: () => [],
+    },
   },
-  emits: ["borrow", "return", "show-qrcode"],
+
+  emits: ["borrow", "return", "show-qrcode", "selection-change"],
+
+  methods: {
+    isSelected(bookId) {
+      return this.selectedBooks.includes(bookId);
+    },
+
+    toggleSelection(bookId) {
+      const selected = [...this.selectedBooks];
+      const index = selected.indexOf(bookId);
+
+      if (index > -1) {
+        selected.splice(index, 1);
+      } else {
+        selected.push(bookId);
+      }
+
+      this.$emit("selection-change", selected);
+    },
+
+    formatDate(dateString) {
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("zh-TW", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      } catch (e) {
+        return "";
+      }
+    },
+
+    formatDueDate(borrowDateString) {
+      try {
+        const borrowDate = new Date(borrowDateString);
+        const dueDate = new Date(borrowDate);
+        dueDate.setDate(dueDate.getDate() + 14);
+        return dueDate.toLocaleDateString("zh-TW", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      } catch (e) {
+        return "";
+      }
+    },
+
+    isOverdue(borrowDateString) {
+      try {
+        const borrowDate = new Date(borrowDateString);
+        const dueDate = new Date(borrowDate);
+        dueDate.setDate(dueDate.getDate() + 14);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        dueDate.setHours(0, 0, 0, 0);
+        return today > dueDate;
+      } catch (e) {
+        return false;
+      }
+    },
+  },
+
   template: `
     <div class="book-list-container">
       <!-- Loading State with Skeleton -->
@@ -41,24 +113,47 @@ export const BookList = {
           <div class="skeleton skeleton-button"></div>
         </div>
       </div>
+
       <!-- Error State -->
       <div v-else-if="error" class="error-message">
         <p class="text-error">{{ error }}</p>
       </div>
+
       <!-- Empty State -->
       <div v-else-if="books.length === 0" class="empty-state">
         <p class="text-light">No books currently {{ type }}</p>
       </div>
+
       <!-- Books Grid -->
       <div v-else class="book-grid" role="list">
         <article
           v-for="book in books"
           :key="book.id"
           class="book-card"
+          :class="{ 'selected': showCheckbox && isSelected(book.id) }"
           role="listitem"
         >
-          <div v-if="showQRButton" class="book-header">
+          <div class="book-header">
+            <!-- Checkbox for selection -->
+            <label
+              v-if="showCheckbox"
+              class="book-checkbox-label"
+              :for="'checkbox-' + book.id"
+            >
+              <input
+                type="checkbox"
+                :id="'checkbox-' + book.id"
+                :checked="isSelected(book.id)"
+                @change="toggleSelection(book.id)"
+                class="book-checkbox"
+                :aria-label="'Select ' + book.name"
+              />
+              <span class="checkbox-custom"></span>
+            </label>
+
+            <!-- QR Code button -->
             <button
+              v-if="showQRButton"
               @click="$emit('show-qrcode', book)"
               class="btn-qrcode"
               :aria-label="'Show QR Code for ' + book.name"
@@ -67,14 +162,17 @@ export const BookList = {
               📱
             </button>
           </div>
+
           <div class="book-content">
             <h3 class="book-title" :title="book.name">{{ book.name }}</h3>
             <p v-if="book.number" class="book-number">{{ book.number }}</p>
             <p v-if="book.author" class="book-author" :title="book.author">by {{ book.author }}</p>
+
             <!-- Show borrower name for borrowed books -->
             <p v-if="type === 'borrowed' && book.borrowerName" class="borrower-name" :title="'Borrowed by: ' + book.borrowerName">
               借閱者：<strong>{{ book.borrowerName }}</strong>
             </p>
+
             <!-- Show borrowed date and due date -->
             <div v-if="type === 'borrowed' && book.borrowedAt" class="borrowed-info">
               <p class="borrowed-date">
@@ -85,10 +183,11 @@ export const BookList = {
               </p>
             </div>
           </div>
+
           <div class="book-actions">
             <!-- Borrow button for available books -->
             <button
-              v-if="type === 'available'"
+              v-if="type === 'available' && !showCheckbox"
               @click="$emit('borrow', book)"
               class="btn btn-primary"
               :disabled="loading"
@@ -96,6 +195,7 @@ export const BookList = {
             >
               Borrow
             </button>
+
             <!-- Return button for borrowed books -->
             <button
               v-if="type === 'borrowed' && showReturnButton"
@@ -111,46 +211,4 @@ export const BookList = {
       </div>
     </div>
   `,
-  methods: {
-    formatDate(dateString) {
-      try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("zh-TW", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        });
-      } catch (e) {
-        return "";
-      }
-    },
-    formatDueDate(borrowDateString) {
-      try {
-        const borrowDate = new Date(borrowDateString);
-        // 加上 14 天
-        const dueDate = new Date(borrowDate);
-        dueDate.setDate(dueDate.getDate() + 14);
-        return dueDate.toLocaleDateString("zh-TW", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        });
-      } catch (e) {
-        return "";
-      }
-    },
-    isOverdue(borrowDateString) {
-      try {
-        const borrowDate = new Date(borrowDateString);
-        const dueDate = new Date(borrowDate);
-        dueDate.setDate(dueDate.getDate() + 14);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        dueDate.setHours(0, 0, 0, 0);
-        return today > dueDate;
-      } catch (e) {
-        return false;
-      }
-    },
-  },
 };

@@ -1,0 +1,259 @@
+/* ========================================
+   Checkbox Selection Styles
+   ======================================== */
+
+/* Book card selected state */
+.book-card.selected {
+  border-color: var(--primary-color, #2563eb);
+  background-color: #eff6ff;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+}
+
+/* Checkbox container in book header */
+.book-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+/* Custom checkbox label */
+.book-checkbox-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hide default checkbox */
+.book-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Custom checkbox appearance */
+.checkbox-custom {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+/* Hover effect */
+.book-checkbox-label:hover .checkbox-custom {
+  border-color: var(--primary-color, #2563eb);
+  background-color: #f0f9ff;
+}
+
+/* Checked state */
+.book-checkbox:checked ~ .checkbox-custom {
+  background-color: var(--primary-color, #2563eb);
+  border-color: var(--primary-color, #2563eb);
+}
+
+/* Checkmark */
+.checkbox-custom::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Show checkmark when checked */
+.book-checkbox:checked ~ .checkbox-custom::after {
+  display: block;
+}
+
+/* Focus state for accessibility */
+.book-checkbox:focus ~ .checkbox-custom {
+  outline: 2px solid var(--primary-color, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Print controls toolbar */
+.print-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--background-alt, #f9fafb);
+  border-radius: var(--border-radius, 8px);
+  flex-wrap: wrap;
+}
+
+.print-controls-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex: 1;
+}
+
+.print-controls-right {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.select-all-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: var(--text-color, #1f2937);
+}
+
+.select-all-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.select-all-custom {
+  position: relative;
+  height: 22px;
+  width: 22px;
+  background-color: #fff;
+  border: 2px solid var(--border-color, #e5e7eb);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.select-all-label:hover .select-all-custom {
+  border-color: var(--primary-color, #2563eb);
+  background-color: #f0f9ff;
+}
+
+.select-all-checkbox:checked ~ .select-all-custom {
+  background-color: var(--primary-color, #2563eb);
+  border-color: var(--primary-color, #2563eb);
+}
+
+.select-all-custom::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.select-all-checkbox:checked ~ .select-all-custom::after {
+  display: block;
+}
+
+.select-all-checkbox:focus ~ .select-all-custom {
+  outline: 2px solid var(--primary-color, #2563eb);
+  outline-offset: 2px;
+}
+
+.selection-count {
+  color: var(--text-light, #6b7280);
+  font-size: 0.875rem;
+}
+
+.selection-count strong {
+  color: var(--primary-color, #2563eb);
+  font-weight: 600;
+}
+
+/* Print button styles */
+.btn-print {
+  background-color: var(--primary-color, #2563eb);
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: var(--border-radius, 8px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-print:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-print:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-print:focus {
+  outline: 2px solid var(--primary-color, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Mode toggle button */
+.btn-mode-toggle {
+  background-color: white;
+  color: var(--text-color, #1f2937);
+  border: 1px solid var(--border-color, #e5e7eb);
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius, 8px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-mode-toggle:hover {
+  background-color: var(--background-alt, #f9fafb);
+  border-color: var(--primary-color, #2563eb);
+}
+
+.btn-mode-toggle.active {
+  background-color: var(--primary-color, #2563eb);
+  color: white;
+  border-color: var(--primary-color, #2563eb);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .print-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .print-controls-left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .print-controls-right {
+    flex-direction: column;
+  }
+
+  .btn-print,
+  .btn-mode-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+}

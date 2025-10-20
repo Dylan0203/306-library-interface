@@ -8,13 +8,13 @@ export const Navigation = {
     current: {
       type: String,
       required: true,
-      validator: (value) => ['available', 'borrowed'].includes(value)
-    }
+      validator: (value) => ["available", "borrowed"].includes(value),
+    },
   },
   template: `
     <nav class="navigation">
       <div class="nav-container">
-        <h2 class="nav-title">Library System</h2>
+        <h2 class="nav-title">306 Library System</h2>
         <ul class="nav-links">
           <li>
             <a
@@ -37,5 +37,5 @@ export const Navigation = {
         </ul>
       </div>
     </nav>
-  `
+  `,
 };

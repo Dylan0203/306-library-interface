@@ -3,6 +3,7 @@
  * Displays list of books available for borrowing
  * Using Vue 3 Composition API
  */
+
 import { api } from "../api.js";
 import { Navigation } from "../components/Navigation.js";
 import { BookList } from "../components/BookList.js";
@@ -16,7 +17,7 @@ import {
   isLoggedIn,
 } from "../auth.js";
 
-const { createApp, ref, onMounted } = Vue;
+const { createApp, ref, onMounted, computed } = Vue;
 
 const app = createApp({
   setup() {
@@ -33,11 +34,28 @@ const app = createApp({
     const qrCodeBook = ref(null);
     const isKeeperMode = ref(false);
 
+    // Print mode state
+    const isPrintMode = ref(false);
+    const selectedBookIds = ref([]);
+
     // Check URL params for keeper mode
     const checkKeeperMode = () => {
       const urlParams = new URLSearchParams(window.location.search);
       isKeeperMode.value = urlParams.get("mode") === "keeper";
     };
+
+    // Computed: all books selected
+    const allSelected = computed(() => {
+      return (
+        books.value.length > 0 &&
+        selectedBookIds.value.length === books.value.length
+      );
+    });
+
+    // Computed: selection count
+    const selectionCount = computed(() => {
+      return selectedBookIds.value.length;
+    });
 
     // Sort books by number (A01-1 format)
     const sortBooksByNumber = (bookList) => {
@@ -91,6 +109,45 @@ const app = createApp({
       await loadBooks();
     };
 
+    // Toggle print mode
+    const togglePrintMode = () => {
+      isPrintMode.value = !isPrintMode.value;
+      // Clear selection when exiting print mode
+      if (!isPrintMode.value) {
+        selectedBookIds.value = [];
+      }
+    };
+
+    // Toggle select all
+    const toggleSelectAll = () => {
+      if (allSelected.value) {
+        selectedBookIds.value = [];
+      } else {
+        selectedBookIds.value = books.value.map((book) => book.id);
+      }
+    };
+
+    // Handle selection change from BookList
+    const handleSelectionChange = (selected) => {
+      selectedBookIds.value = selected;
+    };
+
+    // Print selected books
+    const printSelected = () => {
+      if (selectedBookIds.value.length === 0) {
+        showToast("請至少選擇一本書", "error");
+        return;
+      }
+
+      const ids = selectedBookIds.value.join(",");
+      window.open(`print.html?ids=${ids}`, "_blank");
+    };
+
+    // Print all books
+    const printAll = () => {
+      window.open("print.html", "_blank");
+    };
+
     // Show borrow form (with login check)
     const showBorrowForm = async (book) => {
       // Check if user is logged in
@@ -118,6 +175,7 @@ const app = createApp({
 
       // Get current user info to send to API
       user.value = getCurrentUser();
+
       const borrowData = {
         name: user.value?.name || null,
         email: user.value?.email || null,
@@ -192,7 +250,16 @@ const app = createApp({
       showQRCode,
       qrCodeBook,
       isKeeperMode,
+      isPrintMode,
+      selectedBookIds,
+      allSelected,
+      selectionCount,
       retryLoad,
+      togglePrintMode,
+      toggleSelectAll,
+      handleSelectionChange,
+      printSelected,
+      printAll,
       showBorrowForm,
       handleBorrow,
       cancelBorrow,
@@ -202,9 +269,11 @@ const app = createApp({
       closeToast,
     };
   },
+
   template: `
     <div>
       <navigation current="available"></navigation>
+
       <main id="main-content" class="main-content">
         <div class="page-header">
           <h1>Available Books</h1>
@@ -216,26 +285,84 @@ const app = createApp({
             Retry
           </button>
         </div>
+
+        <!-- Print Controls (only in keeper mode) -->
+        <div v-if="isKeeperMode && !loading && !error && books.length > 0" class="print-controls">
+          <div class="print-controls-left">
+            <!-- Toggle Print Mode -->
+            <button
+              @click="togglePrintMode"
+              class="btn-mode-toggle"
+              :class="{ active: isPrintMode }"
+            >
+              {{ isPrintMode ? '✓ 列印模式' : '列印模式' }}
+            </button>
+
+            <!-- Select All (only in print mode) -->
+            <label v-if="isPrintMode" class="select-all-label">
+              <input
+                type="checkbox"
+                class="select-all-checkbox"
+                :checked="allSelected"
+                @change="toggleSelectAll"
+              />
+              <span class="select-all-custom"></span>
+              <span>全選</span>
+            </label>
+
+            <!-- Selection count -->
+            <div v-if="isPrintMode" class="selection-count">
+              已選擇 <strong>{{ selectionCount }}</strong> / {{ books.length }} 本書
+            </div>
+          </div>
+
+          <div class="print-controls-right">
+            <!-- Print Selected -->
+            <button
+              v-if="isPrintMode"
+              @click="printSelected"
+              class="btn-print"
+              :disabled="selectionCount === 0"
+            >
+              🖨️ 列印已選 ({{ selectionCount }})
+            </button>
+
+            <!-- Print All -->
+            <button
+              @click="printAll"
+              class="btn-print"
+            >
+              🖨️ 列印全部
+            </button>
+          </div>
+        </div>
+
         <book-list
           :books="books"
           type="available"
           :loading="loading || borrowing"
           :error="error"
           :showQRButton="isKeeperMode"
+          :showCheckbox="isPrintMode"
+          :selectedBooks="selectedBookIds"
           @borrow="showBorrowForm"
           @show-qrcode="handleShowQRCode"
+          @selection-change="handleSelectionChange"
         ></book-list>
+
         <borrow-form
           :book="selectedBook"
           :loading="borrowing"
           @confirm="handleBorrow"
           @cancel="cancelBorrow"
         ></borrow-form>
+
         <qrcode-modal
           :book="qrCodeBook"
           :show="showQRCode"
           @close="closeQRCode"
         ></qrcode-modal>
+
         <toast
           :message="toastMessage"
           :type="toastType"
