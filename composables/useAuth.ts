@@ -6,7 +6,8 @@ import { useUserStore } from "~/stores/user";
 import type { GoogleUser } from "~/stores/user";
 
 const GOOGLE_CLIENT_ID =
-  "740864080269-28r9nsv3drtoqdju7h9d8903b9ea12h6.apps.googleusercontent.com";
+  "907501621329-l04imra4g4oknkf4u56pout84ljf16nl.apps.googleusercontent.com";
+// "740864080269-28r9nsv3drtoqdju7h9d8903b9ea12h6.apps.googleusercontent.com";
 
 interface JwtPayload {
   sub: string;
